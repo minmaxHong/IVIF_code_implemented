@@ -8,8 +8,7 @@ This repository is based on the paper "Infrared and Visible Image Fusion using a
 
 ##  Introduction
 
-본 프로젝트는 PyTorch로 구현된 딥러닝 프레임워크를 통해 적외선 및 가시광선 이미지를 결합하여 더 나은 정보 전달력을 제공하는 이미지 융합 결과를 생성합니다.
-
+This project generates image fusion results that provide better information conveyance by combining infrared and visible light images through a deep learning framework implemented in PyTorch.
 ### Input
 
 - **Visible Image**
