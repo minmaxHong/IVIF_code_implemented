@@ -7,14 +7,24 @@ from base_part import BasePart
 from detail_content import DetailContent
 
 def load_image(visible_path=None, infrared_path=None):
+    ''' get source images
+    Args:
+        visible_path: visible image path
+        infrared_path: infrared image path
+
+    Returns:
+        visible_image: raw visible image
+        infrared_image: raw infrared image 
+    '''
     visible_image = cv2.imread(visible_path)
     infrared_image = cv2.imread(infrared_path)
     
     visible_image = cv2.cvtColor(visible_image, cv2.COLOR_BGR2GRAY)
     infrared_image = cv2.cvtColor(infrared_image, cv2.COLOR_BGR2GRAY)
     
-    
     return visible_image, infrared_image
+
+
 def main():
     CURR_DIR = os.getcwd()
     

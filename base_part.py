@@ -61,9 +61,7 @@ class BasePart:
 
     def get_frobenius_norm(self, image: torch.Tensor):
         ''' Calculate the Frobenius norm 
-        Args:
-            None
-        
+
         Return:
             torch.sum(image ** 2): Frobenius norm
         '''
@@ -77,10 +75,10 @@ class BasePart:
             iterations_per_epoch: train iterations
         
         Returns:
-            self.visible_I_k_b.detach().cpu().numpy(): optimized_visible_I_k_b
-            self.infrared_I_k_b.detach().cpu().numpy(): optimized_infrared_I_k_b
-            
+            self.I_1_b: get optimized visible image in order to extract I_k_d_1 
+            self.I_2_b: optimized infrared image in order to I_k_d_2
         '''
+
         visible_optimizer = torch.optim.Adam([self.visible_I_k_b], lr=0.01)
         infrared_optimizer = torch.optim.Adam([self.infrared_I_k_b], lr=0.01)
         
@@ -143,14 +141,3 @@ class BasePart:
         F_b = hyperparameter * self.I_1_b + hyperparameter * self.I_2_b
         
         return F_b
-    
-def load_image(visible_path=None, infrared_path=None):
-    visible_image = cv2.imread(visible_path)
-    infrared_image = cv2.imread(infrared_path)
-    
-    visible_image = cv2.cvtColor(visible_image, cv2.COLOR_BGR2GRAY)
-    infrared_image = cv2.cvtColor(infrared_image, cv2.COLOR_BGR2GRAY)
-    
-    
-    return visible_image, infrared_image
-

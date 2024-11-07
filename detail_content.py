@@ -49,9 +49,6 @@ class DetailContent:
         Args:
             optimized_visible_I_k_b: visible I_k_b
             optimized_infrared_I_k_b: infrared I_k_b
-        
-        Returns:
-            visible_I_k_d, infrared_I_k_d: I_k_d = I - I_k_b
         '''
         self.visible_I_k_d = self.visible_image - optimized_visible_I_k_b
         self.infrared_I_k_d = self.infrared_image - optimized_infrared_I_k_b
@@ -59,7 +56,12 @@ class DetailContent:
     def get_initial_acitivity_level_map(self):
         ''' first of all, calculate φ_k^{i,m} = φ_i(I_k^d)
         and calculate C_k^i(x,y) = ||φ_k^{i,1:M}(x,y)||_1
+
+        Returns:
+            initial_visible_activity_map_i: C^k_i(x, y) [vis] 
+            initial_infrared_activity_map_i C^k_i(x, y) [infrared]
         '''
+       
         # calculate φ_k^{i,m}, i∈{1,2}
         preprocess_visible_I_k_d = preprocess_image(self.visible_I_k_d)
         preprocess_infrared_I_k_d = preprocess_image(self.infrared_I_k_d)
@@ -111,7 +113,14 @@ class DetailContent:
     
     def get_final_acitivity_level_map(self, block_size: int=1):
         ''' C^{hat}^i_k(x,y) = C^i_k(x+b, y+θ) / (2r+1)^2, r: block_size
+        Args:
+            block_size: kernel size
+
+        Returns:
+            final_visible_activity_level_map_i: C^{hat}^i_k(x, y) [vis]
+            final_infrared_activity_level_map_i: C^{hat}^i_k(x, y) [infrared]
         '''
+
         initial_visible_activity_map_i, initial_infrared_activity_map_i = self.get_initial_acitivity_level_map()
         
         final_visible_activity_level_map_i = {}
@@ -147,6 +156,14 @@ class DetailContent:
         
     def get_initial_weight_map(self, eps: int=1e-05):
         '''get W^i_k(x,y) = C_{hat}^i_k(x,y) / sigma C_{hat}^i_n(x,y)
+
+        Args:
+            eps: preventing it from being divided from zero
+        
+        Returns:
+            initial_visible_weight_map: W^i_k(x,y) [vis]
+            initial_infrared_weight_map: W^i_k(x,y) [infrared]
+
         '''
         final_visible_activity_level_map_i, final_infrared_activity_level_map_i = self.get_final_acitivity_level_map()
         
@@ -170,8 +187,12 @@ class DetailContent:
     
     def get_final_weight_map(self):
         ''' input detail size -> height: 270, width: 360
-        calculate upsampling
+
+        Return:
+            final_visible_weight_map: [vis]
+            final_infrared_weight_map: [infrared]
         '''
+
         initial_visible_weight_map, initial_infrared_weight_map = self.get_initial_weight_map()
         height, width = 270, 360
         final_visible_weight_map = {}
@@ -194,11 +215,12 @@ class DetailContent:
 
     def get_fused_detail_content(self):
         ''' F^i_d(x,y) = sigma W^i_n(x,y) * I^d_n(x,y) -> F_d(x,y) = max[F^i_d(x,y)|i∈{1,2,3,4}]
+
+        Return:
+            np_fused_detail_content: detail content image
         '''
         final_visible_weight_map, final_infrared_weight_map = self.get_final_weight_map()
         
-        # visible-I^d_n(x,y): self.visible_I_k_d
-        # infrared-I^d_n(x,y): self.infrared_I_k_d
         fused_detail_content_i = {}
         for key in final_visible_weight_map.keys():
             visible_sum = final_visible_weight_map[key] * self.visible_I_k_d
@@ -211,17 +233,10 @@ class DetailContent:
 
         np_fused_detail_content = fused_detail_content.numpy()
         np_fused_detail_content = np_fused_detail_content.astype(np.uint8)
+
+        # Can verify detail_content image 
         # cv2.imwrite('detail_content.png', np_fused_detail_content)
         # cv2.imshow('image', np_fused_detail_content)
         # cv2.waitKey(0)
 
         return np_fused_detail_content
-                   
-def load_image(visible_path=None, infrared_path=None):
-    visible_image = cv2.imread(visible_path)
-    infrared_image = cv2.imread(infrared_path)
-    
-    visible_image = cv2.cvtColor(visible_image, cv2.COLOR_BGR2GRAY)
-    infrared_image = cv2.cvtColor(infrared_image, cv2.COLOR_BGR2GRAY)
-    
-    return visible_image, infrared_image
