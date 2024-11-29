@@ -21,7 +21,7 @@ def main():
     parser.add_argument('--dataset', type=str, default=r"C:\Users\USER\Desktop\Dataset\MS-COCO\images\train\train2017", help="KAIST Dataset")
     parser.add_argument('--batch_size', type=int, default=4, help="batch size for training")
     parser.add_argument('--epochs', type=int, default=1, help="number of training epochs")
-    parser.add_argument('--hyperparamter', type=int, default=100, help="loss of lambda")
+    parser.add_argument('--hyperparamter', type=int, default=1 , help="loss of lambda")
     parser.add_argument('--lr', type=float, default=1e-4, help="learning rate")
     args = parser.parse_args()
     

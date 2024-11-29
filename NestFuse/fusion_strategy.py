@@ -1,6 +1,5 @@
 import torch
 import torch.functional as F
-from model import Encoder
 
 def spatial_attention(vis_features: torch.Tensor, ir_features: torch.Tensor, epsilon=1e-05):
     shape = vis_features.size(1)

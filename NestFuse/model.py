@@ -1,8 +1,10 @@
 import torch
 import torch.nn as nn
 import numpy as np
-from torchinfo import summary
 import torch.nn.functional as F
+
+from torchinfo import summary
+from torchvision.utils import save_image
 
 class UpsampleReshape_eval(torch.nn.Module):
     def __init__(self):
@@ -96,7 +98,6 @@ class NestFuse(nn.Module):
         input_channel, out_channels = 1, 16 # first
         _input_channel, _out_channels = 64, 1 # second
         
-        
         _1stage_filters = [
                         [176, 64], # DCB11
                         [240, 64], # DCB12
@@ -139,7 +140,16 @@ class NestFuse(nn.Module):
             _DCB11 = self.DCB11(torch.cat((_ECB10, self.upsample_eval(_ECB10, _ECB20)), dim=1))
             _DCB12 = self.DCB12(torch.cat((_ECB10, _DCB11, self.upsample_eval(_DCB11, _DCB21)), dim=1))
             _DCB13 = self.DCB13(torch.cat((_ECB10, _DCB11, _DCB12, self.upsample_eval(_DCB12, _DCB22)), dim=1))
+            
+            # save_image(torch.mean(_DCB31, dim=1), "fusion_outputs/_DCB31.png", normalize=True)
+            # save_image(torch.mean(_DCB21, dim=1), "fusion_outputs/_DCB21.png", normalize=True)
+            # save_image(torch.mean(_DCB22, dim=1), "fusion_outputs/_DCB22.png", normalize=True)
+            # save_image(torch.mean(_DCB11, dim=1), "fusion_outputs/_DCB11.png", normalize=True)
+            # save_image(torch.mean(_DCB12, dim=1), "fusion_outputs/_DCB12.png", normalize=True)
+            # save_image(torch.mean(_DCB13, dim=1), "fusion_outputs/_DCB13.png", normalize=True)
+            
             result = self.output_conv(_DCB13)
+            
             return result
             
         else:   
@@ -151,6 +161,7 @@ class NestFuse(nn.Module):
             _DCB13 = self.DCB13(torch.cat((_ECB10, _DCB11, _DCB12, self.upsampling(_DCB22)), dim=1))
             
             result = self.output_conv(_DCB13)
+           
             return result
     
     def forward(self, x: torch.Tensor):

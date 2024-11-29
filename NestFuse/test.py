@@ -12,7 +12,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--test_images", type=str, default=r'C:\Users\USER\Desktop\Dataset\TNO', help="path of source image")
     parser.add_argument("--out_path", type=str, default='./fusion_outputs', help='path of fused image')
-    parser.add_argument("--weights", type=str, default=r"C:\Users\USER\Desktop\code\sungmin_github\imagefusion_NetFuse\saved_models\basic\model_fusion0.pth", help="NestFuse weights")
+    parser.add_argument("--weights", type=str, default=r"C:\Users\USER\Desktop\code\sungmin_github\imagefusion_implement\NestFuse\saved_models\basic\model_fusion0.pth", help="NestFuse weights")
     args = parser.parse_args()
     
     # if os.path.exists(args.out_path):
